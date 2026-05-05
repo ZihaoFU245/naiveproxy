@@ -56,7 +56,6 @@ class NaiveProxy {
 
   void DoAcceptLoop();
   void OnAcceptComplete(int result);
-  void HandleAcceptResult(int result);
 
   void OnPreambleComplete(int result);
 
@@ -90,6 +89,7 @@ class NaiveProxy {
 
   unsigned int last_id_;
 
+  bool accept_loop_needs_restart_ = false;
   std::unique_ptr<StreamSocket> accepted_socket_;
 
   std::vector<TunnelId> tunnel_ids_;

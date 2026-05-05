@@ -88,25 +88,20 @@ NaiveProxy::~NaiveProxy() = default;
 
 void NaiveProxy::DoAcceptLoop() {
   int result;
+  accept_loop_needs_restart_ = false;
   do {
     result = listen_socket_->Accept(
         &accepted_socket_, base::BindOnce(&NaiveProxy::OnAcceptComplete,
                                           weak_ptr_factory_.GetWeakPtr()));
     if (result == ERR_IO_PENDING) {
+      accept_loop_needs_restart_ = true;
       return;
     }
-    HandleAcceptResult(result);
+    OnAcceptComplete(result);
   } while (result == OK);
 }
 
 void NaiveProxy::OnAcceptComplete(int result) {
-  HandleAcceptResult(result);
-  if (result == OK) {
-    DoAcceptLoop();
-  }
-}
-
-void NaiveProxy::HandleAcceptResult(int result) {
   if (result != OK) {
     LOG(ERROR) << "Accept error: " << ErrorToShortString(result);
     return;
@@ -135,6 +130,9 @@ void NaiveProxy::HandleAcceptResult(int result) {
       url_getter_->StartOne();
     }
     DoConnect();
+    if (accept_loop_needs_restart_) {
+      DoAcceptLoop();
+    }
   }
 }
 
@@ -144,6 +142,9 @@ void NaiveProxy::OnPreambleComplete(int result) {
     return;
   }
   DoConnect();
+  if (accept_loop_needs_restart_) {
+    DoAcceptLoop();
+  }
 }
 
 void NaiveProxy::DoConnect() {
