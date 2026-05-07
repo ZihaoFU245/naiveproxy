@@ -66,6 +66,7 @@ class PreambleGetter {
         std::make_unique<ClientSocketHandle>();
     std::unique_ptr<SourceStream> upstream;
     scoped_refptr<IOBuffer> read_buffer;
+    std::string last_content;
     CompletionOnceCallback callback;
   };
 
