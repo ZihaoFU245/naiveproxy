@@ -131,7 +131,7 @@ class Socks5ServerSocket : public StreamSocket {
 
   // While writing, this buffer stores the complete write handshake data.
   // While reading, it stores the handshake information received so far.
-  std::string buffer_;
+  std::vector<uint8_t> buffer_;
 
   // This becomes true when the SOCKS handshake has completed and the
   // overlying connection is free to communicate.
@@ -145,13 +145,13 @@ class Socks5ServerSocket : public StreamSocket {
   bool was_ever_used_;
 
   SocksEndPointAddressType address_type_;
-  int address_size_;
+  size_t address_size_;
 
   std::string user_;
   std::string pass_;
-  char auth_method_;
-  char auth_status_;
-  char reply_;
+  uint8_t auth_method_;
+  uint8_t auth_status_;
+  uint8_t reply_;
 
   HostPortPair request_endpoint_;
 
