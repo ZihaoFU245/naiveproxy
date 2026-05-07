@@ -134,7 +134,10 @@ void NaiveConnection::DoCallback(int result) {
 }
 
 void NaiveConnection::OnIOComplete(int result) {
-  DCHECK_NE(next_state_, STATE_NONE);
+  if (next_state_ == STATE_NONE) {
+    // Disconnect() was called during client or server socket Connect().
+    return;
+  }
   int rv = DoLoop(result);
   if (rv != ERR_IO_PENDING) {
     DoCallback(rv);
