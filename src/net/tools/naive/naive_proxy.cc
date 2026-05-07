@@ -138,8 +138,7 @@ void NaiveProxy::OnAcceptComplete(int result) {
 
 void NaiveProxy::OnPreambleComplete(int result) {
   if (result != OK) {
-    LOG(ERROR) << "Preamble error: " << ErrorToShortString(result);
-    return;
+    LOG(WARNING) << "Preamble error: " << ErrorToShortString(result);
   }
   DoConnect();
   if (accept_loop_needs_restart_) {
